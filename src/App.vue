@@ -8,9 +8,3 @@ import AdminToolbar from './components/admin/AdminToolbar.vue'
   <AdminToolbar />
   <RouterView />
 </template>
-
-<script>
-export default {
-  components: 'AdminToolbar'
-}
-</script>

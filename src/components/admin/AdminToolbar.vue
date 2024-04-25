@@ -1,11 +1,3 @@
-<template>
-	<div class="toolbar" v-if="isLoggedIn">
-		<router-link to="/admin">To admin</router-link>
-		<button class="toolbar-sign-out" @click="handleSignOut">Sign out</button>
-	</div>
-
-</template>
-
 <script setup>
 import { onMounted, ref } from 'vue';
 import router from '@/router';
@@ -32,6 +24,15 @@ onMounted(() => {
 });
 
 </script>
+
+<template>
+	<div class="toolbar" v-if="isLoggedIn">
+		<router-link to="/admin">To admin</router-link>
+		<button class="toolbar-sign-out" @click="handleSignOut">Sign out</button>
+	</div>
+
+</template>
+
 
 <style scoped>
 .toolbar {

@@ -5,8 +5,9 @@ const store = createStore({
 		user: {
 			loggedIn: false,
 			data: null
-		}
+		},
 	},
+	
 	// getters: {
 	// 	user(state) {
 	// 		return state.user
