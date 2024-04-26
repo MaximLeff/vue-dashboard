@@ -1,12 +1,17 @@
 <template>
   <section class="menu">
-    <Draggable class="mtl-tree" :maxLevel="2" v-model="treeData" treeLine>
+    <Draggable class="mtl-tree" ref="tree" :maxLevel="2" v-model="treeData" treeLine>
       <template #default="{ node, stat }">
         <!-- <OpenIcon v-if="stat.children.length" :open="stat.open" class="mtl-mr" @click.native="stat.open = !stat.open" /> -->
         <input class="mtl-checkbox mtl-mr" type="checkbox" v-model="stat.checked" />
-        <span class="mtl-ml">{{ node.text }}</span>
+        <span class="mtl-ml" @click="removeFromShowMenu(node)">{{ node.title }}</span>
       </template>
     </Draggable>
+    <div class="menu-list">
+      <div v-for="link in allPagesLink" :key="link.title">
+        <div class="menu-item" @click="addToShowMenu(link.title)">{{ link.title }}</div>
+      </div>
+  </div>
   </section>
 </template>
 
@@ -21,23 +26,81 @@ export default {
     return {
       treeData: [
         {
-          text: 'Projects',
+          title: 'Projects',
           children: [
             {
-              text: 'Frontend',
+              title: 'Frontend',
             },
             {
-              text: 'Backend',
+              title: 'Backend',
             },
           ],
         },
-        { text: 'Home' },
-        { text: 'Contacts' },
+        { title: 'Home' },
+        { title: 'Contacts' },
       ],
+      allPagesLink:[
+        {
+          title: 'Map',
+          base: true
+        },
+        {
+          title: 'About',
+          base: true
+        }
+      ]
     }
   },
+  methods: {
+    addToShowMenu(item) {
+      let itemObj = {
+        title: item,
+        base: true
+      }
+      this.$refs.tree.add(itemObj)
+      
+      let filterLink = this.allPagesLink.filter(x => {
+        if (x.title !== item) {
+          return x
+        }
+      })
+      this.allPagesLink = filterLink
+    },
+
+    removeFromShowMenu(item) {
+
+      if (item.base) {
+        let filterLink = this.treeData.filter(x=>{
+          if (x.title !== item.title) {
+            return x
+          }
+        })
+
+        this.treeData = filterLink
+      }
+    }
+  }
 }
 </script>
+
+<style scoped>
+.menu {
+  display: flex;
+  column-gap: 10px;
+}
+.menu > div {
+  width: 50%;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+.menu-list {
+  display: flex;
+  flex-direction: column;
+}
+.menu-item {
+  border: 1px solid #ccc;
+}
+</style>
 
 <style>
 .vtlist-inner {
