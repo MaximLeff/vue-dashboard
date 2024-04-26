@@ -1,6 +1,6 @@
 <script setup>
 import PageHeaderMenu from '@/components/admin/PageHeaderMenu.vue'
-import PageHeaderMenuDrag from '@/components/admin/PageHeaderMenuDrag.vue'
+import PageHeaderMenuDragPlugin from '@/components/admin/PageHeaderMenuDragPlugin.vue';
 </script>
 
 <template>
@@ -21,6 +21,6 @@ import PageHeaderMenuDrag from '@/components/admin/PageHeaderMenuDrag.vue'
     </section>
 
     <PageHeaderMenu />
-    <PageHeaderMenuDrag />
+    <PageHeaderMenuDragPlugin />
   </main>
 </template>
