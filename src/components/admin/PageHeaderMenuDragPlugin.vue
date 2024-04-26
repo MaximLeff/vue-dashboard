@@ -4,12 +4,14 @@
       <template #default="{ node, stat }">
         <!-- <OpenIcon v-if="stat.children.length" :open="stat.open" class="mtl-mr" @click.native="stat.open = !stat.open" /> -->
         <input class="mtl-checkbox mtl-mr" type="checkbox" v-model="stat.checked" />
-        <span class="mtl-ml" @click="removeFromShowMenu(node)">{{ node.title }}</span>
+        <div class="mtl-ml" @click="removeFromShowMenu(node)">{{ node.title }}</div>
+        <div class="menu-page-link">{{ node.link }}</div>
       </template>
     </Draggable>
     <div class="menu-list">
-      <div v-for="link in allPagesLink" :key="link.title">
-        <div class="menu-item" @click="addToShowMenu(link.title)">{{ link.title }}</div>
+      <div class="menu-item" v-for="item in allPagesLink" :key="item.title">
+        <div @click="addToShowMenu(item)">{{ item.title }}</div>
+        <div class="menu-page-link">{{ item.link }}</div>
       </div>
   </div>
   </section>
@@ -27,25 +29,36 @@ export default {
       treeData: [
         {
           title: 'Projects',
+          link: '/projects',
           children: [
             {
               title: 'Frontend',
+              link: '/frontend',
             },
             {
               title: 'Backend',
+              link: '/backend',
             },
           ],
         },
-        { title: 'Home' },
-        { title: 'Contacts' },
+        { 
+          title: 'Home',
+          link: '/',
+        },
+        { 
+          title: 'Contacts',
+          link: '/contacts'
+        },
       ],
       allPagesLink:[
         {
           title: 'Map',
+          link: '/map',
           base: true
         },
         {
           title: 'About',
+          link: '/about',
           base: true
         }
       ]
@@ -54,13 +67,14 @@ export default {
   methods: {
     addToShowMenu(item) {
       let itemObj = {
-        title: item,
-        base: true
+        title: item.title,
+        link: item.link,
+        base: true,
       }
       this.$refs.tree.add(itemObj)
       
       let filterLink = this.allPagesLink.filter(x => {
-        if (x.title !== item) {
+        if (x.title !== item.title) {
           return x
         }
       })
@@ -77,6 +91,7 @@ export default {
         })
 
         this.treeData = filterLink
+        this.allPagesLink.push(item)
       }
     }
   }
@@ -99,6 +114,9 @@ export default {
 }
 .menu-item {
   border: 1px solid #ccc;
+}
+.menu-page-link {
+  opacity: 0.3;
 }
 </style>
 
