@@ -4,17 +4,47 @@
       <template #default="{ node, stat }">
         <!-- <OpenIcon v-if="stat.children.length" :open="stat.open" class="mtl-mr" @click.native="stat.open = !stat.open" /> -->
         <input class="mtl-checkbox mtl-mr" type="checkbox" v-model="stat.checked" />
-        <div class="mtl-ml" @click="removeFromShowMenu(node)">{{ node.title }}</div>
-        <div class="menu-page-link">{{ node.link }}</div>
+        <div class="mtl-ml" >{{ node.title }}</div>
+        <div class="menu-page-link">{{ node.url }}</div>
+        <div class="menu-page-link-target" v-if="node.target">new tab</div>
+        <div class="menu-link-remove" @click.prevent="removeFromShowMenu(node)">
+          <button v-if="node.customLink">Remove</button>
+          <button v-else>Hide</button>
+        </div>
+        <button v-if="node.customLink">Settings</button>
       </template>
     </Draggable>
+
+
     <div class="menu-list">
       <div class="menu-item" v-for="item in allPagesLink" :key="item.title">
-        <div @click="addToShowMenu(item)">{{ item.title }}</div>
-        <div class="menu-page-link">{{ item.link }}</div>
+        <div>{{ item.title }}</div>
+        <div class="menu-page-link">{{ item.url }}</div>
+        <button @click="addToShowMenu(item)">Show</button>
       </div>
-  </div>
+    </div>
+
+
+    <form class="menu-add-link" @submit.prevent="onSubmit">
+      <div class="menu-add-link-item">
+        <label for="link-title">Link title</label>
+        <input v-model="addLink.title" type="text" id="link-title">
+      </div>
+      <div class="menu-add-link-item">
+        <label for="link-url">Link url</label>
+        <input v-model="addLink.url" type="text" id="link-url">
+      </div>
+      <div class="menu-add-link-item">
+        <label for="link-target">Open link in new tab</label>
+        <input v-model="addLink.target" type="checkbox" id="link-target">
+      </div>
+      <div class="menu-add-link-item">
+        <button v-if="this.addLink.title && this.addLink.url" @click="addCustomLink">Add</button>
+        <div v-if="this.errors.coincidenceTitle">Такое название уже используется</div>
+      </div>
+    </form>
   </section>
+
 </template>
 
 <script>
@@ -29,71 +59,130 @@ export default {
       treeData: [
         {
           title: 'Projects',
-          link: '/projects',
+          url: '/projects',
           children: [
             {
               title: 'Frontend',
-              link: '/frontend',
+              url: '/frontend',
             },
             {
               title: 'Backend',
-              link: '/backend',
+              url: '/backend',
             },
           ],
         },
         { 
           title: 'Home',
-          link: '/',
+          url: '/',
         },
         { 
           title: 'Contacts',
-          link: '/contacts'
+          url: '/contacts'
         },
       ],
       allPagesLink:[
         {
           title: 'Map',
-          link: '/map',
-          base: true
+          url: '/map'
         },
         {
           title: 'About',
-          link: '/about',
-          base: true
+          url: '/about'
+        }
+      ],
+      addLink:[
+        {
+          title: 0,
+          url: 0,
+          target: false,
+        }
+      ],
+      errors: [
+        {
+          coincidenceTitle: false
         }
       ]
     }
   },
   methods: {
-    addToShowMenu(item) {
-      let itemObj = {
-        title: item.title,
-        link: item.link,
-        base: true,
-      }
-      this.$refs.tree.add(itemObj)
-      
-      let filterLink = this.allPagesLink.filter(x => {
-        if (x.title !== item.title) {
-          return x
+    addToShowMenu(item, customLink, customLinkTarget) {
+      this.errors.coincidenceTitle = false
+      this.treeData.filter(x=>{
+        if (x.children) {
+          x.children.filter(y => {
+            return x.title
+          })
         }
+
+        if (x.title === item.title) this.errors.coincidenceTitle = true
       })
-      this.allPagesLink = filterLink
-    },
 
-    removeFromShowMenu(item) {
-
-      if (item.base) {
-        let filterLink = this.treeData.filter(x=>{
+      if (!this.errors.coincidenceTitle) {
+        let itemObj = {
+            title: item.title,
+            url: item.url
+          }
+        if (customLink) {
+          itemObj.customLink = true
+        }
+        if (customLinkTarget) {
+          itemObj.target = true
+        }
+      
+        this.$refs.tree.add(itemObj)
+        
+        let filterLink = this.allPagesLink.filter(x => {
           if (x.title !== item.title) {
             return x
           }
         })
-
-        this.treeData = filterLink
-        this.allPagesLink.push(item)
+        this.allPagesLink = filterLink
       }
-    }
+    },
+
+    addCustomLink(){
+      let customLink = true
+      let customLinkTarget = this.addLink.target
+      this.addToShowMenu(this.addLink, customLink, customLinkTarget)
+    },
+
+    removeFromShowMenu(item) {
+      // console.log(item)
+      // if (item.base) {
+        let filterLink = this.treeData.filter(x=>{
+          // if (x.title !== item.title) {
+          //   return x
+          // }
+          if (x.children) {
+            console.log(x.children)
+          //   console.log('has children')
+            x.children.filter(y=> {
+          //     // console.log('no children')
+          //     // console.log(item.title)
+              console.log(y.title)
+
+          //     if (y.title !== item.title) {
+          //       console.log('catch')
+                return y
+          //     }
+            })
+          // } else {
+          //   console.log('no children')
+          //   // console.log(x.title)
+          //   if (x.title !== item.title) {
+          //     return x
+          //   }
+          }
+
+          
+        })
+
+        console.log(filterLink)
+
+        // this.treeData = filterLink
+        // if (!item.customLink) this.allPagesLink.push(item)
+      // }
+    },
   }
 }
 </script>
@@ -117,6 +206,9 @@ export default {
 }
 .menu-page-link {
   opacity: 0.3;
+}
+#link-target {
+  -webkit-appearance: auto;
 }
 </style>
 
