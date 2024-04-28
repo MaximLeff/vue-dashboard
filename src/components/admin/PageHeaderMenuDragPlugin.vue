@@ -16,8 +16,8 @@
     </Draggable>
 
 
-    <div class="menu-list">
-      <div class="menu-item" v-for="item in allPagesLink" :key="item.title">
+    <div class="menu-list vtlist-inner">
+      <div class="menu-item tree-node-inner" v-for="item in allPagesLink" :key="item.title">
         <div>{{ item.title }}</div>
         <div class="menu-page-link">{{ item.url }}</div>
         <button @click="addToShowMenu(item)">Show</button>
@@ -147,47 +147,33 @@ export default {
     },
 
     removeFromShowMenu(item) {
-      // console.log(item)
-      // if (item.base) {
-        let filterLink = this.treeData.filter(x=>{
-          // if (x.title !== item.title) {
-          //   return x
-          // }
-          if (x.children) {
-            console.log(x.children)
-          //   console.log('has children')
-            x.children.filter(y=> {
-          //     // console.log('no children')
-          //     // console.log(item.title)
-              console.log(y.title)
-
-          //     if (y.title !== item.title) {
-          //       console.log('catch')
-                return y
-          //     }
+      let filterLink = this.treeData.filter(a=>{
+        if (a.title !== item.title) {
+          if (!a.children) {
+            return a
+          } else {
+            let b = a.children.filter(c=> {
+              if(c.title !== item.title) {
+                return c
+              }
             })
-          // } else {
-          //   console.log('no children')
-          //   // console.log(x.title)
-          //   if (x.title !== item.title) {
-          //     return x
-          //   }
+            a.children = b
+            return a
           }
+        }
+      })
 
-          
-        })
-
-        console.log(filterLink)
-
-        // this.treeData = filterLink
-        // if (!item.customLink) this.allPagesLink.push(item)
-      // }
+      this.treeData = filterLink
+      if (!item.customLink) this.allPagesLink.push(item)
     },
   }
 }
 </script>
 
 <style scoped>
+button {
+  margin-top: 10px;
+}
 .menu {
   display: flex;
   column-gap: 10px;
@@ -221,6 +207,10 @@ export default {
   background: #fff;
   border: 1px solid #ccc;
   padding: 10px;
+}
+.tree-node-inner input {
+  margin: 0;
+  position: absolute;
 }
 .tree-node--with-tree-line {
 	position: relative;

@@ -21,6 +21,14 @@ main {
   gap: var(--gap);
 }
 
+input {
+  border-radius: var(--brs);
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+label + input {
+  margin-top: 5px;
+}
 
 section {
   border: 1px solid #ccc;
