@@ -1,6 +1,6 @@
 <template>
   <section class="menu">
-    <Draggable class="mtl-tree" ref="tree" :maxLevel="2" v-model="treeData" treeLine>
+    <Draggable class="mtl-tree" ref="tree" :maxLevel="2" v-model="this.showMenu" treeLine>
       <template #default="{ node, stat }">
         <!-- <OpenIcon v-if="stat.children.length" :open="stat.open" class="mtl-mr" @click.native="stat.open = !stat.open" /> -->
         <input class="mtl-checkbox mtl-mr" type="checkbox" v-model="stat.checked" />
@@ -49,6 +49,7 @@
 
 <script>
 import { BaseTree, Draggable, pro, OpenIcon } from '@he-tree/vue'
+import store from '@/store'
 // import '@he-tree/vue/style/default.css'
 // import '@he-tree/vue/style/material-design.css'
 
@@ -56,7 +57,7 @@ export default {
   components: { Draggable, OpenIcon },
   data() {
     return {
-      treeData: [
+      showLinks: [
         {
           title: 'Projects',
           url: '/projects',
@@ -107,7 +108,7 @@ export default {
   methods: {
     addToShowMenu(item, customLink, customLinkTarget) {
       this.errors.coincidenceTitle = false
-      this.treeData.filter(x=>{
+      this.showLinks.filter(x=>{
         if (x.children) {
           x.children.filter(y => {
             return x.title
@@ -147,7 +148,7 @@ export default {
     },
 
     removeFromShowMenu(item) {
-      let filterLink = this.treeData.filter(a=>{
+      let filterLink = this.showLinks.filter(a=>{
         if (a.title !== item.title) {
           if (!a.children) {
             return a
@@ -163,10 +164,16 @@ export default {
         }
       })
 
-      this.treeData = filterLink
+      this.showLinks = filterLink
       if (!item.customLink) this.allPagesLink.push(item)
     },
-  }
+  },
+
+  computed: {
+    showMenu () {
+      return this.$store.getters.showLinks
+    },
+  },
 }
 </script>
 
